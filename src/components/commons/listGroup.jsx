@@ -2,8 +2,6 @@ import React from 'react';
 
 const listGroup = (props) => {
   const { items, textProperty, valueProperty } = props;
-  //   const classes =
-  // console.log('listGroup items', items);
   return (
     <ul className="list-group">
       {items.data.map((item) => (

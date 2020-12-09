@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
+import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
-import { getMovies } from '../services/movieService';
+import { getMovies, deleteMovie } from '../services/movieService';
 import { getGenres } from '../services/genreService';
 import Pagination from './commons/pagination';
 import ListGroup from './commons/listGroup';
@@ -54,18 +55,18 @@ class Movies extends Component {
   }
 
   handleDelete = async (id) => {
-    // const { movies: originalMovies } = this.state;
-    // const movies = originalMovies;
-    // movies.data = originalMovies.data.filter((m) => m._id !== id);
-    // this.setState({ movies });
-    // try {
-    //   await deleteMovie(id);
-    // } catch (ex) {
-    //   if (ex.response && ex.response.status === 404) {
-    //     toast.error('This movie has already been deleted');
-    //     this.setState({ movies: originalMovies });
-    //   }
-    // }
+    const { movies: originalMovies } = this.state;
+    const movies = originalMovies;
+    movies.data = originalMovies.data.filter((m) => m._id !== id);
+    this.setState({ movies });
+    try {
+      await deleteMovie(id);
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404) {
+        toast.error('This movie has already been deleted');
+        this.setState({ movies: originalMovies });
+      }
+    }
   };
 
   handleLike = (item) => {
@@ -105,9 +106,7 @@ class Movies extends Component {
     table.sortHeaderAsc = true;
     table.sortColumn = { path: 'title', order: 'asc' };
     table.data = movies.data;
-    console.log('tableInit', table);
     this.setState({ table });
-    console.log('this.state.table', this.state.table);
   }
 
   handleSort = (data) => {
@@ -159,9 +158,7 @@ class Movies extends Component {
 
   async movieInit() {
     const { movies } = this.state;
-    // const { data } = console.log('data', data);
     movies.data = await getMovies();
-    console.log('movies init', movies);
     this.setState({ movies });
   }
 
